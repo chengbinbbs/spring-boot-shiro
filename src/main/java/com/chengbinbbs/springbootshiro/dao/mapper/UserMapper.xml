@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chengbinbbs.springbootshiro.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.chengbinbbs.springbootshiro.domain.User">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="locked" jdbcType="BIT" property="locked" />
+
+    <collection property="roles" javaType="java.util.List" ofType="com.chengbinbbs.springbootshiro.domain.Role">
+      <id column="rid" jdbcType="BIGINT" property="id" />
+      <result column="role" jdbcType="VARCHAR" property="role" />
+      <result column="description" jdbcType="VARCHAR" property="description" />
+      <result column="available" jdbcType="BIT" property="available" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, password, salt, locked
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    u.*,r.id as rid,r.role,r.description,r.available
+    from sys_users u LEFT JOIN sys_users_roles ur on u.id=ur.user_id LEFT JOIN sys_roles r on r.id=ur.role_id
+    where u.id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sys_users
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.chengbinbbs.springbootshiro.domain.User" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_users (id, username, password, 
+      salt, locked)
+    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{salt,jdbcType=VARCHAR}, #{locked,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chengbinbbs.springbootshiro.domain.User">
+    insert into sys_users
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="salt != null">
+        salt,
+      </if>
+      <if test="locked != null">
+        locked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null">
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="locked != null">
+        #{locked,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chengbinbbs.springbootshiro.domain.User">
+    update sys_users
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null">
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="locked != null">
+        locked = #{locked,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chengbinbbs.springbootshiro.domain.User">
+    update sys_users
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      locked = #{locked,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="correlationRoles" parameterType="java.util.List">
+    INSERT INTO sys_users_roles(user_id,role_id)
+    values
+    <foreach collection="roleIds" index="index" item="item" separator=",">
+      (#{userId},#{item})
+    </foreach>
+  </insert>
+
+  <delete id="uncorrelationRoles" parameterType="java.util.List">
+    delete from sys_users_roles where user_id=#{userId} and role_id in
+    <foreach close=")" collection="roleIds" index="index" item="item" open="(" separator=",">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="findByUsername" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_users
+    where 1 = 1
+    <if test="username != null and username != ''">
+      and username = #{username}
+    </if>
+  </select>
+
+  <select id="findRoles" resultType="string">
+    select
+    role
+    FROM sys_users_roles ur,sys_users u,sys_roles r
+    where
+    u.username=#{username}
+    and u.id=ur.user_id and ur.role_id=r.id
+  </select>
+
+  <select id="findPermissions" resultType="string">
+    select
+    permission
+    from sys_users u, sys_roles r, sys_permissions p, sys_users_roles ur, sys_roles_permissions rp
+    where
+    u.username=#{username}
+    and u.id=ur.user_id and r.id=ur.role_id and r.id=rp.role_id and p.id=rp.permission_id
+  </select>
+
+  <select id="queryUserCount"  resultType="int">
+  select count(id)
+  from sys_users
+  where 1 = 1
+  <if test="id != null">
+    and id = #{id}
+  </if>
+  <if test="username != null and username != ''">
+    and username = #{username}
+  </if>
+</select>
+
+  <select id="queryUserList"  resultMap="BaseResultMap">
+    select
+    u.*,r.id as rid,r.role,r.description,r.available
+    from sys_users u LEFT JOIN sys_users_roles ur on u.id=ur.user_id LEFT JOIN sys_roles r on r.id=ur.role_id
+    where 1 = 1
+    <if test="id != null">
+      and u.id = #{id}
+    </if>
+    <if test="username != null and username != ''">
+      and u.username = #{username}
+    </if>
+  </select>
+</mapper>

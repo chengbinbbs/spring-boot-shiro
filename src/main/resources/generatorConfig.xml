@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<properties resource="application.properties" />
+	<!--classPathEntry:数据库的JDBC驱动 -->
+	<classPathEntry
+		location="F:/maven/repository/datacenter/mysql/mysql-connector-java/5.1.24/mysql-connector-java-5.1.24.jar" />
+
+	<context id="my" targetRuntime="MyBatis3">
+		<!-- 注意这里面的顺序确定的，不能随变更改 -->
+		<!-- 自定义的分页插件 <plugin type="com.deppon.foss.module.helloworld.shared.PaginationPlugin"/> -->
+
+		<!-- 生成的pojo，将implements Serializable -->
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>
+		<commentGenerator>
+			<property name="suppressDate" value="false" />
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+
+		<!-- 必须的（1 required） -->
+		<!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+		<jdbcConnection driverClass="${spring.datasource.driverClassName}"
+			connectionURL="${spring.datasource.url}" userId="${spring.datasource.username}" password="${spring.datasource.password}" />
+
+		<!-- 可选的（0 or 1） -->
+		<!-- 类型转换器或者加类型解析器 -->
+		<!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer true，把JDBC DECIMAL 和 
+			NUMERIC 类型解析为java.math.BigDecimal -->
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="true" />
+		</javaTypeResolver>
+
+
+		<!-- 必须的（1 required） -->
+		<!-- java模型生成器 -->
+		<!-- targetProject:自动生成代码的位置 -->
+		<javaModelGenerator targetPackage="com.chengbinbbs.springbootshiro.domain"
+			targetProject="E:/shiro/spring-boot-shiro/src/main/java">
+			<!-- TODO enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="true" />
+			<!-- 从数据库返回的值被清理前后的空格 -->
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<!-- 必须的（1 required） -->
+		<!-- map xml 生成器 -->
+		<sqlMapGenerator targetPackage="com.chengbinbbs.springbootshiro.dao.mapper"
+			targetProject="E:/shiro/spring-boot-shiro/src/main/java">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<!-- 可选的（0 or 1） -->
+		<!-- mapper 或者就是dao接口生成器 -->
+		<javaClientGenerator targetPackage="com.chengbinbbs.springbootshiro.dao"
+			targetProject="E:/shiro/spring-boot-shiro/src/main/java" type="XMLMAPPER">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<!-- 必须的（1...N） -->
+		<!-- pojo 实体生成器 -->
+		<!-- tableName:用于自动生成代码的数据库表；domainObjectName:对应于数据库表的javaBean类名 -->
+		<!-- schema即为数据库名 可不写 -->
+		<!-- 列出要生成代码的所有表，这里配置的是不生成Example文件 -->
+		<!-- <table tableName="CL_FootBallMatch" domainObjectName="FootBallMatch" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"> <property name="useActualColumnNames" 
+			value="true"/> </table> -->
+		<table tableName="sys_users" domainObjectName="User"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false"
+			selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+		</table>
+		<table tableName="sys_users" domainObjectName="User"
+			   enableCountByExample="false" enableUpdateByExample="false"
+			   enableDeleteByExample="false" enableSelectByExample="false"
+			   selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+		</table>
+		<table tableName="sys_roles" domainObjectName="Role"
+			   enableCountByExample="false" enableUpdateByExample="false"
+			   enableDeleteByExample="false" enableSelectByExample="false"
+			   selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+		</table>
+		<table tableName="sys_permissions" domainObjectName="Permission"
+			   enableCountByExample="false" enableUpdateByExample="false"
+			   enableDeleteByExample="false" enableSelectByExample="false"
+			   selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+		</table>
+	</context>
+</generatorConfiguration>

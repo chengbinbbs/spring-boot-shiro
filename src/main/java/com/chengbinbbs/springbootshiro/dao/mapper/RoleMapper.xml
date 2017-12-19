@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chengbinbbs.springbootshiro.dao.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.chengbinbbs.springbootshiro.domain.Role">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="available" jdbcType="BIT" property="available" />
+
+    <collection property="permissions" javaType="java.util.List" ofType="com.chengbinbbs.springbootshiro.domain.Permission">
+      <id column="pid" jdbcType="BIGINT" property="id" />
+      <result column="permission" jdbcType="VARCHAR" property="permission" />
+      <result column="descp" jdbcType="VARCHAR" property="description" />
+      <result column="avi" jdbcType="BIT" property="available" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role, description, available
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    r.*,p.id as pid,p.permission,p.description as descp,p.available as avi
+    from
+    sys_roles r LEFT JOIN sys_roles_permissions rp on r.id=rp.role_id LEFT JOIN sys_permissions p on p.id=rp.permission_id
+    where r.id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sys_roles
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.chengbinbbs.springbootshiro.domain.Role" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_roles (id, role, description, 
+      available)
+    values (#{id,jdbcType=BIGINT}, #{role,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{available,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chengbinbbs.springbootshiro.domain.Role">
+    insert into sys_roles
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="available != null">
+        available,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="available != null">
+        #{available,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chengbinbbs.springbootshiro.domain.Role">
+    update sys_roles
+    <set>
+      <if test="role != null">
+        role = #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="available != null">
+        available = #{available,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chengbinbbs.springbootshiro.domain.Role">
+    update sys_roles
+    set role = #{role,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      available = #{available,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="correlationPermissions" parameterType="java.util.List">
+    INSERT INTO sys_roles_permissions(role_id,permission_id)
+    values
+    <foreach collection="permissionIds" index="index" item="item" separator=",">
+      (#{roleId},#{item})
+    </foreach>
+  </insert>
+
+  <delete id="uncorrelationPermissions" parameterType="java.util.List">
+    delete from sys_roles_permissions where role_id=#{roleId} and permission_id in
+    <foreach close=")" collection="permissionIds" index="index" item="item" open="(" separator=",">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="queryRoleCount"  resultType="int">
+    select count(id)
+    from sys_roles
+    where 1 = 1
+    <if test="id != null">
+      and id = #{id}
+    </if>
+    <if test="role != null and role != ''">
+      and role = #{role}
+    </if>
+  </select>
+
+  <select id="queryRoleList"  resultMap="BaseResultMap">
+    select
+    r.*,p.id as pid,p.permission,p.description as descp,p.available as avi
+    from sys_roles r LEFT JOIN sys_roles_permissions rp on r.id=rp.role_id LEFT JOIN sys_permissions p on p.id=rp.permission_id
+    where 1 = 1
+    <if test="id != null">
+      and r.id = #{id}
+    </if>
+    <if test="role != null and role != ''">
+      and r.role = #{role}
+    </if>
+  </select>
+
+  <select id="queryAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_roles
+  </select>
+</mapper>
