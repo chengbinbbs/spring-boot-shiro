@@ -25,7 +25,13 @@
 			<div class="layui-input-block">
 				<#list permissions as permission>
 					<input type="checkbox" name="role" value="${permission.id}" title="${permission.description}">
-                    <div class="layui-unselect layui-form-checkbox ${permission.hasPermission?if_exists} lay-skin=""><span>${permission.description}</span><i class="layui-icon"></i></div>
+                    			<div class="layui-unselect
+                     			<#list (item.permissions) as p>
+						<#if (p.id)?? && (permission.id)?? && permission.id == p.id>
+                                        	layui-form-checked
+                                    		</#if>
+                        		</#list>
+                     			layui-form-checkbox" lay-skin><span>${permission.description}</span><i class="layui-icon"></i></div>
 				</#list>
 			</div>
 		</div>
