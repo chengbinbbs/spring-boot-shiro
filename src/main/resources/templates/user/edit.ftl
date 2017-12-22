@@ -25,7 +25,13 @@
 			<div class="layui-input-block">
 				<#list roles as role>
                     <input type="checkbox" name="role" value="${role.id}" title="${role.description}">
-                    <div class="layui-unselect layui-form-checkbox ${role.hasRole?if_exists} lay-skin=""><span>${role.description}</span><i class="layui-icon"></i></div>
+                    <div class="layui-unselect
+                    	<#list (item.roles) as r>
+				<#if (role.id)?? && (r.id)?? && role.id == r.id>
+                                        layui-form-checked
+                                </#if>
+                        </#list>
+			layui-form-checkbox" lay-skin><span>${role.description}</span><i class="layui-icon"></i></div>
 				</#list>
 			</div>
 		</div>
