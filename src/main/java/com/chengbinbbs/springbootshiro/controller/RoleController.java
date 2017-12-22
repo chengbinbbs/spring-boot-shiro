@@ -79,7 +79,9 @@ public class RoleController {
                     PermissionDTO dto = new PermissionDTO();
                     BeanUtils.copyProperties(permission,dto);
                     if(perIds.contains(permission.getId())){
-                        dto.setHasPermission("layui-form-checkbox");
+                        dto.setHasPermission(true);
+                    }else{
+                        dto.setHasPermission(false);
                     }
                     permissions.add(dto);
                 }
