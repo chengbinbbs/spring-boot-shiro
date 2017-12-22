@@ -17,16 +17,16 @@ public class RoleDTO implements Serializable {
 
     private String description;
 
-    private String hasRole;
+    private boolean hasRole false;
 
     public RoleDTO() {
     }
 
-    public String isHasRole() {
+    public boolean isHasRole() {
         return hasRole;
     }
 
-    public void setHasRole(String hasRole) {
+    public void setHasRole(boolean hasRole) {
         this.hasRole = hasRole;
     }
 
