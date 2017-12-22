@@ -14,7 +14,7 @@ public class PermissionDTO implements Serializable {
 
     private String description;
 
-    private String hasPermission;
+    private boolean hasPermission = false;
 
     public Long getId() {
         return id;
@@ -40,11 +40,11 @@ public class PermissionDTO implements Serializable {
         this.description = description;
     }
 
-    public String isHasPermission() {
+    public boolean isHasPermission() {
         return hasPermission;
     }
 
-    public void setHasPermission(String hasPermission) {
+    public void setHasPermission(boolean hasPermission) {
         this.hasPermission = hasPermission;
     }
 }
