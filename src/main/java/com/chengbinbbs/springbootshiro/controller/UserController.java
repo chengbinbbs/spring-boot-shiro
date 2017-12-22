@@ -85,7 +85,9 @@ public class UserController {
                     RoleDTO dto = new RoleDTO();
                     BeanUtils.copyProperties(role,dto);
                     if(roleIds.contains(role.getId())){
-                        dto.setHasRole("layui-form-checkbox");
+                        dto.setHasRole(true);
+                    }else{
+                        dto.setHasRole(false);
                     }
                     roles.add(dto);
                 }
